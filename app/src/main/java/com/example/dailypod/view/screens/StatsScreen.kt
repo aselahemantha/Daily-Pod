@@ -12,13 +12,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.palette.graphics.Target
-import com.example.dailypod.data.Habit
-import com.example.dailypod.data.HabitEntry
+import com.example.dailypod.data.HabitRecordEntity
+import com.example.dailypod.data.HabitTemplateEntity
 import com.example.dailypod.view.components.HabitStatsCard
 import com.example.dailypod.view.components.StatsCard
 import kotlinx.coroutines.runBlocking
@@ -26,37 +24,39 @@ import kotlinx.coroutines.runBlocking
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatsScreen(
-    habits: List<Habit>,
-    todayEntries: List<HabitEntry>,
-    getHabitStats: suspend (String) -> com.example.dailypod.data.HabitStats,
-    modifier: Modifier = Modifier
+    habitTemplateEntities: List<HabitTemplateEntity>,
+    todayEntries: List<HabitRecordEntity>,
+    getHabitProgressEntity: suspend (String) -> com.example.dailypod.data.HabitProgressEntity,
+    modifier: Modifier = Modifier,
 ) {
     val completedToday = todayEntries.count { it.completed }
-    val todayProgress = if (habits.isNotEmpty()) (completedToday.toFloat() / habits.size * 100).toInt() else 0
+    val todayProgress =
+        if (habitTemplateEntities.isNotEmpty()) (completedToday.toFloat() / habitTemplateEntities.size * 100).toInt() else 0
 
     LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(vertical = 16.dp)
+        contentPadding = PaddingValues(vertical = 16.dp),
     ) {
         // Header
         item {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(
                     text = "Statistics",
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 Text(
                     text = "Track your progress over time",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
@@ -65,24 +65,29 @@ fun StatsScreen(
         item {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 StatsCard(
                     title = "Today",
                     subtitle = "Today",
-                    value = "$completedToday/${habits.size}",
+                    value = "$completedToday/${habitTemplateEntities.size}",
                     icon = Icons.Default.TurnRight,
                     progress = todayProgress.toFloat(),
                     showProgress = true,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 )
 
                 StatsCard(
                     title = "Average Rate",
                     subtitle = "Avg Rate",
-                    value = "${calculateAverageCompletionRate(habits, getHabitStats)}%",
+                    value = "${
+                        calculateAverageCompletionRate(
+                            habitTemplateEntities,
+                            getHabitProgressEntity,
+                        )
+                    }%",
                     icon = Icons.Default.TrendingUp,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 )
             }
         }
@@ -93,79 +98,82 @@ fun StatsScreen(
                 text = "Habit Progress",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
 
-        if (habits.isEmpty()) {
+        if (habitTemplateEntities.isEmpty()) {
             item {
                 EmptyStatsCard()
             }
         } else {
-            items(habits) { habit ->
+            items(habitTemplateEntities) { habit ->
                 val stats by remember(habit.id) {
                     derivedStateOf {
-                        runBlocking { getHabitStats(habit.id) }
+                        runBlocking { getHabitProgressEntity(habit.id) }
                     }
                 }
-                
+
                 HabitStatsCard(
-                    habit = habit,
-                    stats = stats
+                    habitTemplateEntity = habit,
+                    stats = stats,
                 )
             }
         }
 
         // Achievement Summary
-        if (habits.isNotEmpty()) {
+        if (habitTemplateEntities.isNotEmpty()) {
             item {
-                AchievementCard(habits = habits, getHabitStats = getHabitStats)
+                AchievementCard(
+                    habitTemplateEntities = habitTemplateEntities,
+                    getHabitProgressEntity = getHabitProgressEntity,
+                )
             }
         }
     }
 }
 
 @Composable
-private fun EmptyStatsCard(
-    modifier: Modifier = Modifier
-) {
+private fun EmptyStatsCard(modifier: Modifier = Modifier) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Icon(
                 imageVector = Icons.Default.CalendarMonth,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(48.dp)
+                modifier = Modifier.size(48.dp),
             )
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             Text(
                 text = "No habits created yet",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            
+
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             Text(
                 text = "Create your first habit to start tracking progress",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
         }
     }
@@ -174,65 +182,69 @@ private fun EmptyStatsCard(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AchievementCard(
-    habits: List<Habit>,
-    getHabitStats: suspend (String) -> com.example.dailypod.data.HabitStats,
-    modifier: Modifier = Modifier
+    habitTemplateEntities: List<HabitTemplateEntity>,
+    getHabitProgressEntity: suspend (String) -> com.example.dailypod.data.HabitProgressEntity,
+    modifier: Modifier = Modifier,
 ) {
-    val totalStreaks = remember {
-        derivedStateOf {
-            runBlocking {
-                habits.sumOf { habit ->
-                    getHabitStats(habit.id).currentStreak
+    val totalStreaks =
+        remember {
+            derivedStateOf {
+                runBlocking {
+                    habitTemplateEntities.sumOf { habit ->
+                        getHabitProgressEntity(habit.id).currentStreak
+                    }
                 }
             }
         }
-    }
 
     Card(
         modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .background(
-                        Color(0xFF10B981),
-                        RoundedCornerShape(24.dp)
-                    ),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .size(48.dp)
+                        .background(
+                            Color(0xFF10B981),
+                            RoundedCornerShape(24.dp),
+                        ),
+                contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     imageVector = Icons.Default.EmojiEvents,
                     contentDescription = null,
                     tint = Color.White,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
                 )
             }
-            
+
             Spacer(modifier = Modifier.width(12.dp))
-            
+
             Column {
                 Text(
                     text = "Total Active Streaks",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 Text(
                     text = "${totalStreaks.value} days",
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
                 )
             }
         }
@@ -241,17 +253,17 @@ private fun AchievementCard(
 
 @Composable
 private fun calculateAverageCompletionRate(
-    habits: List<Habit>,
-    getHabitStats: suspend (String) -> com.example.dailypod.data.HabitStats
-): Int {
-    return if (habits.isEmpty()) {
+    habitTemplateEntities: List<HabitTemplateEntity>,
+    getHabitProgressEntity: suspend (String) -> com.example.dailypod.data.HabitProgressEntity,
+): Int =
+    if (habitTemplateEntities.isEmpty()) {
         0
     } else {
         runBlocking {
-            val totalRate = habits.sumOf { habit ->
-                getHabitStats(habit.id).completionRate
-            }
-            totalRate / habits.size
+            val totalRate =
+                habitTemplateEntities.sumOf { habit ->
+                    getHabitProgressEntity(habit.id).completionRate
+                }
+            totalRate / habitTemplateEntities.size
         }
     }
-}

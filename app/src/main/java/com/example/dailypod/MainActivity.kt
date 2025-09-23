@@ -18,13 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
 import com.dailypod.habits.ui.theme.DailyPodTheme
-import com.example.dailypod.data.HabitDatabase
-import com.example.dailypod.databinding.ActivityMainBinding
+import com.example.dailypod.data.db.HabitDatabase
 import com.example.dailypod.repository.HabitRepository
 import com.example.dailypod.view.components.BottomNavigationBar
 import com.example.dailypod.view.components.HabitForm

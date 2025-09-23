@@ -19,7 +19,7 @@ fun HabitNavigation(
     navController: NavHostController,
     viewModel: HabitViewModel,
     onShowHabitForm: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val habits by viewModel.habits.collectAsStateWithLifecycle()
     val todayEntries by viewModel.todayEntries.collectAsStateWithLifecycle()
@@ -29,29 +29,29 @@ fun HabitNavigation(
     NavHost(
         navController = navController,
         startDestination = "today",
-        modifier = modifier
+        modifier = modifier,
     ) {
         composable("today") {
             TodayScreen(
-                habits = habits,
+                habitTemplateEntities = habits,
                 todayEntries = todayEntries,
                 onToggleHabit = { habitId ->
                     viewModel.toggleHabitCompletion(habitId)
                 },
                 onShowHabitForm = onShowHabitForm,
-                getHabitStats = { habitId ->
+                getHabitProgressEntity = { habitId ->
                     viewModel.getHabitStats(habitId)
-                }
+                },
             )
         }
 
         composable("stats") {
             StatsScreen(
-                habits = habits,
+                habitTemplateEntities = habits,
                 todayEntries = todayEntries,
-                getHabitStats = { habitId ->
+                getHabitProgressEntity = { habitId ->
                     viewModel.getHabitStats(habitId)
-                }
+                },
             )
         }
 

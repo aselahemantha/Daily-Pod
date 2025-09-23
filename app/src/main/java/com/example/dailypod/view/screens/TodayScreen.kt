@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.dailypod.data.Habit
+import com.example.dailypod.data.entity.HabitTemplateEntity
 import com.example.dailypod.view.components.HabitCard
 import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
@@ -23,92 +23,97 @@ import java.util.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodayScreen(
-    habits: List<Habit>,
-    todayEntries: List<com.example.dailypod.data.HabitEntry>,
+    habitTemplateEntities: List<HabitTemplateEntity>,
+    todayEntries: List<com.example.dailypod.data.entity.HabitRecordEntity>,
     onToggleHabit: (String) -> Unit,
     onShowHabitForm: () -> Unit,
-    getHabitStats: suspend (String) -> com.example.dailypod.data.HabitStats,
-    modifier: Modifier = Modifier
+    getHabitProgressEntity: suspend (String) -> com.example.dailypod.data.entity.HabitProgressEntity,
+    modifier: Modifier = Modifier,
 ) {
     val completedToday = todayEntries.count { it.completed }
-    val todayProgress = if (habits.isNotEmpty()) (completedToday.toFloat() / habits.size * 100).toInt() else 0
-    
+    val todayProgress =
+        if (habitTemplateEntities.isNotEmpty()) (completedToday.toFloat() / habitTemplateEntities.size * 100).toInt() else 0
+
     val dateFormatter = SimpleDateFormat("EEEE, MMMM d", Locale.getDefault())
     val todayDate = dateFormatter.format(Date())
 
     LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(vertical = 16.dp)
+        contentPadding = PaddingValues(vertical = 16.dp),
     ) {
         // Header
         item {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(
                     text = "DailyPod",
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
                 )
                 Text(
                     text = todayDate,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
 
         // Progress Summary
-        if (habits.isNotEmpty()) {
+        if (habitTemplateEntities.isNotEmpty()) {
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface
-                    ),
+                    colors =
+                        CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                        ),
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
                 ) {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Column {
                             Text(
                                 text = "Today's Progress",
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                             Text(
-                                text = "$completedToday / ${habits.size}",
+                                text = "$completedToday / ${habitTemplateEntities.size}",
                                 style = MaterialTheme.typography.headlineMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface
+                                color = MaterialTheme.colorScheme.onSurface,
                             )
                         }
-                        
+
                         Box(
-                            modifier = Modifier
-                                .size(64.dp)
-                                .background(
-                                    MaterialTheme.colorScheme.primary,
-                                    RoundedCornerShape(32.dp)
-                                ),
-                            contentAlignment = Alignment.Center
+                            modifier =
+                                Modifier
+                                    .size(64.dp)
+                                    .background(
+                                        MaterialTheme.colorScheme.primary,
+                                        RoundedCornerShape(32.dp),
+                                    ),
+                            contentAlignment = Alignment.Center,
                         ) {
                             Text(
                                 text = "$todayProgress%",
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onPrimary
+                                color = MaterialTheme.colorScheme.onPrimary,
                             )
                         }
                     }
@@ -117,28 +122,28 @@ fun TodayScreen(
         }
 
         // Habits List
-        if (habits.isEmpty()) {
+        if (habitTemplateEntities.isEmpty()) {
             item {
                 EmptyStateCard(
-                    onShowHabitForm = onShowHabitForm
+                    onShowHabitForm = onShowHabitForm,
                 )
             }
         } else {
-            items(habits) { habit ->
+            items(habitTemplateEntities) { habit ->
                 val isCompleted = todayEntries.any { it.habitId == habit.id && it.completed }
-                
+
                 // Use remember to cache stats for each habit
                 val stats by remember(habit.id) {
                     derivedStateOf {
-                        runBlocking { getHabitStats(habit.id) }
+                        runBlocking { getHabitProgressEntity(habit.id) }
                     }
                 }
-                
+
                 HabitCard(
-                    habit = habit,
+                    habitTemplateEntity = habit,
                     isCompleted = isCompleted,
                     streak = stats.currentStreak,
-                    onToggle = { onToggleHabit(habit.id) }
+                    onToggle = { onToggleHabit(habit.id) },
                 )
             }
         }
@@ -148,62 +153,65 @@ fun TodayScreen(
 @Composable
 private fun EmptyStateCard(
     onShowHabitForm: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Box(
-                modifier = Modifier
-                    .size(64.dp)
-                    .background(
-                        MaterialTheme.colorScheme.primary,
-                        RoundedCornerShape(32.dp)
-                    ),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .size(64.dp)
+                        .background(
+                            MaterialTheme.colorScheme.primary,
+                            RoundedCornerShape(32.dp),
+                        ),
+                contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     imageVector = Icons.Default.CalendarToday,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(32.dp),
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             Text(
                 text = "Start Your Journey",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
-            
+
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             Text(
                 text = "Create your first habit to begin tracking your daily progress.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
-            
+
             Spacer(modifier = Modifier.height(24.dp))
-            
+
             Button(
                 onClick = onShowHabitForm,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Text("Create First Habit")
             }
