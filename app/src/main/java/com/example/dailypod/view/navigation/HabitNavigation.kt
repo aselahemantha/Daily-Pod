@@ -14,6 +14,7 @@ import com.example.dailypod.view.screens.StatsScreen
 import com.example.dailypod.view.screens.TodayScreen
 import com.example.dailypod.viewmodel.HabitViewModel
 
+@Suppress("ktlint:standard:function-naming")
 @Composable
 fun HabitNavigation(
     navController: NavHostController,

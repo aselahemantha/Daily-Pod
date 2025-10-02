@@ -15,7 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -103,7 +103,7 @@ fun HabitCard(
                         modifier = Modifier.padding(top = 4.dp),
                     ) {
                         Icon(
-                            imageVector = Icons.Default.LocalFireDepartment,
+                            imageVector = Icons.Default.Home,
                             contentDescription = "Streak",
                             tint = Color(0xFFFF6B35),
                             modifier = Modifier.size(16.dp),

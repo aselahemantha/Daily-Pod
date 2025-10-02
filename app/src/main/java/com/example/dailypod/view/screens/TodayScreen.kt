@@ -6,20 +6,28 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.dailypod.data.entity.HabitTemplateEntity
 import com.example.dailypod.view.components.HabitCard
+import com.example.dailypod.view.util.scale.scaleHeight
+import com.example.dailypod.view.util.scale.scaleWidth
 import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.util.*
+import com.example.dailypod.R
+import com.example.dailypod.view.util.scale.scaleElevation
+import com.example.dailypod.view.util.scale.scaleRadius
 
+@Suppress("ktlint:standard:function-naming")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodayScreen(
@@ -41,9 +49,9 @@ fun TodayScreen(
         modifier =
             modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(vertical = 16.dp),
+                .padding(horizontal = 16f.scaleWidth()),
+        verticalArrangement = Arrangement.spacedBy(16f.scaleHeight()),
+        contentPadding = PaddingValues(vertical = 16f.scaleHeight()),
     ) {
         // Header
         item {
@@ -52,7 +60,7 @@ fun TodayScreen(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(
-                    text = "DailyPod",
+                    text = stringResource(R.string.APPNAME),
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
@@ -75,13 +83,13 @@ fun TodayScreen(
                             containerColor = MaterialTheme.colorScheme.surface,
                         ),
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(12f.scaleRadius()),
                 ) {
                     Row(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .padding(16.dp),
+                                .padding(16f.scaleWidth()),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -161,35 +169,35 @@ private fun EmptyStateCard(
             CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
             ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4f.scaleElevation()),
+        shape = RoundedCornerShape(12f.scaleRadius()),
     ) {
         Column(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(32.dp),
+                    .padding(32f.scaleWidth()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Box(
                 modifier =
                     Modifier
-                        .size(64.dp)
+                        .size(64f.scaleWidth())
                         .background(
                             MaterialTheme.colorScheme.primary,
-                            RoundedCornerShape(32.dp),
+                            RoundedCornerShape(32f.scaleRadius()),
                         ),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
-                    imageVector = Icons.Default.CalendarToday,
+                    painter = painterResource(R.drawable.home_icon),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.size(32.dp),
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16f.scaleHeight()))
 
             Text(
                 text = "Start Your Journey",
@@ -198,7 +206,7 @@ private fun EmptyStateCard(
                 color = MaterialTheme.colorScheme.onSurface,
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8f.scaleHeight()))
 
             Text(
                 text = "Create your first habit to begin tracking your daily progress.",
@@ -207,7 +215,7 @@ private fun EmptyStateCard(
                 textAlign = TextAlign.Center,
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(24f.scaleHeight()))
 
             Button(
                 onClick = onShowHabitForm,

@@ -49,7 +49,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             SettingsItem(
                 title = "Cloud Sync",
                 subtitle = "Backup and sync your habits across devices",
-                icon = Icons.Default.Cloud,
+                icon = Icons.Default.Home,
                 onClick = { /* TODO: Implement cloud sync */ },
             )
         }
@@ -67,7 +67,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             SettingsItem(
                 title = "Data & Privacy",
                 subtitle = "Manage your data and privacy settings",
-                icon = Icons.Default.PrivacyTip,
+                icon = Icons.Default.Home,
                 onClick = { /* TODO: Implement privacy settings */ },
             )
         }
@@ -76,7 +76,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             SettingsItem(
                 title = "Help & Support",
                 subtitle = "Get help and contact support",
-                icon = Icons.Default.Help,
+                icon = Icons.Default.Home,
                 onClick = { /* TODO: Implement help & support */ },
             )
         }

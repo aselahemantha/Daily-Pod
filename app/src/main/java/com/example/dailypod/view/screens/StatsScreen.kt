@@ -15,8 +15,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.dailypod.data.HabitRecordEntity
-import com.example.dailypod.data.HabitTemplateEntity
+import com.example.dailypod.data.entity.HabitRecordEntity
+import com.example.dailypod.data.entity.HabitTemplateEntity
 import com.example.dailypod.view.components.HabitStatsCard
 import com.example.dailypod.view.components.StatsCard
 import kotlinx.coroutines.runBlocking
@@ -26,7 +26,7 @@ import kotlinx.coroutines.runBlocking
 fun StatsScreen(
     habitTemplateEntities: List<HabitTemplateEntity>,
     todayEntries: List<HabitRecordEntity>,
-    getHabitProgressEntity: suspend (String) -> com.example.dailypod.data.HabitProgressEntity,
+    getHabitProgressEntity: suspend (String) -> com.example.dailypod.data.entity.HabitProgressEntity,
     modifier: Modifier = Modifier,
 ) {
     val completedToday = todayEntries.count { it.completed }
@@ -71,7 +71,7 @@ fun StatsScreen(
                     title = "Today",
                     subtitle = "Today",
                     value = "$completedToday/${habitTemplateEntities.size}",
-                    icon = Icons.Default.TurnRight,
+                    icon = Icons.Default.Home,
                     progress = todayProgress.toFloat(),
                     showProgress = true,
                     modifier = Modifier.weight(1f),
@@ -86,7 +86,7 @@ fun StatsScreen(
                             getHabitProgressEntity,
                         )
                     }%",
-                    icon = Icons.Default.TrendingUp,
+                    icon = Icons.Default.Home,
                     modifier = Modifier.weight(1f),
                 )
             }
@@ -152,7 +152,7 @@ private fun EmptyStatsCard(modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Icon(
-                imageVector = Icons.Default.CalendarMonth,
+                imageVector = Icons.Default.Home,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(48.dp),
@@ -183,7 +183,7 @@ private fun EmptyStatsCard(modifier: Modifier = Modifier) {
 @Composable
 private fun AchievementCard(
     habitTemplateEntities: List<HabitTemplateEntity>,
-    getHabitProgressEntity: suspend (String) -> com.example.dailypod.data.HabitProgressEntity,
+    getHabitProgressEntity: suspend (String) -> com.example.dailypod.data.entity.HabitProgressEntity,
     modifier: Modifier = Modifier,
 ) {
     val totalStreaks =
@@ -224,7 +224,7 @@ private fun AchievementCard(
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
-                    imageVector = Icons.Default.EmojiEvents,
+                    imageVector = Icons.Default.DateRange,
                     contentDescription = null,
                     tint = Color.White,
                     modifier = Modifier.size(24.dp),
@@ -254,7 +254,7 @@ private fun AchievementCard(
 @Composable
 private fun calculateAverageCompletionRate(
     habitTemplateEntities: List<HabitTemplateEntity>,
-    getHabitProgressEntity: suspend (String) -> com.example.dailypod.data.HabitProgressEntity,
+    getHabitProgressEntity: suspend (String) -> com.example.dailypod.data.entity.HabitProgressEntity,
 ): Int =
     if (habitTemplateEntities.isEmpty()) {
         0

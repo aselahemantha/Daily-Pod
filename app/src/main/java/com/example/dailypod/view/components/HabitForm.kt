@@ -24,6 +24,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.dailypod.data.enums.TargetFrequency
+import com.example.dailypod.view.util.scale.scaleElevation
+import com.example.dailypod.view.util.scale.scaleHeight
+import com.example.dailypod.view.util.scale.scaleRadius
+import com.example.dailypod.view.util.scale.scaleWidth
 
 @Suppress("ktlint:standard:function-naming")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,12 +46,12 @@ fun HabitForm(
 
     Dialog(onDismissRequest = onCancel) {
         Card(
-            modifier = modifier.widthIn(max = 400.dp),
-            shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+            modifier = modifier.widthIn(max = 400f.scaleWidth()),
+            shape = RoundedCornerShape(16f.scaleRadius()),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8f.scaleElevation()),
         ) {
             Column(
-                modifier = Modifier.padding(24.dp),
+                modifier = Modifier.padding(24f.scaleWidth()),
             ) {
                 // Header
                 Row(
